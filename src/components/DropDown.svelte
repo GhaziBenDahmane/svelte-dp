@@ -2,13 +2,11 @@
     import Day from './Day.svelte';
     export let value;
     export let view;
-    let formattedDate;
 </script>
 <style>
 div {
-    background-color: aqua;
-    height: 500px;
-    width: 700px;
+    height: 224px;
+    width: 224px;
 }
 </style>
 <div>
