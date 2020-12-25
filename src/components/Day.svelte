@@ -1,50 +1,55 @@
 <script>
     import { createEventDispatcher } from "svelte";
+    import dayjs from "dayjs";
+    import DropDown from "./DropDown.svelte";
 
     export let value;
-    $: offset = value.date(1).weekday() - 1;
-    $: days = [...new Array(42).keys()].map(d => d - parseInt(value.add(offset, 'day').format('D')));
-    $: console.log(offset, days);
+    $: firstDay = value.startOf("month");
+    $: firstDayOfCalendar = firstDay.subtract(firstDay.weekday() || 7, "day");
+    $: days = [...new Array(42).keys()].map((i) =>
+        firstDayOfCalendar.add(i, "day")
+    );
     const dispatch = createEventDispatcher();
     function click(day) {
-        dispatch('input', day);
+        dispatch("input", day);
     }
-    function dayClass(date, day) {
-        if (!day) return 'cell day today';
-        if(date.month() !== date.add(day, 'day').month()) return 'cell day outside';
-        return 'cell day inside';
+    function dayClass(day) {
+        if (day.isSame(value)) return "cell day today";
+        if (day.month() === value.month()) return "cell day inside";
+        return "cell day outside";
     }
 </script>
+
 <style>
-.cell {
-    width: 30px;
-    height: 30px;
-    display: inline-block;
-}
-.day {
-    cursor: pointer;
-}
-.outside {
-    background-color: white;
-}
-.inside {
-    background-color: blue;
-}
-.today {
-    background-color: red;
-}
-.label {
-    background-color: gray;
-}
+    .cell {
+        width: 30px;
+        height: 30px;
+        display: inline-block;
+    }
+    .day {
+        cursor: pointer;
+    }
+    .outside {
+        background-color: white;
+    }
+    .inside {
+        background-color: blue;
+    }
+    .today {
+        background-color: red;
+    }
+    .label {
+        background-color: gray;
+    }
 </style>
-{#each days.slice(0, 7) as day}
+
+{#each [...new Array(7).keys()] as day}
     <div class="cell label">
-        {value.add(day, 'day').format('ddd')}
+        {firstDayOfCalendar.add(day, 'day').format('ddd')}
     </div>
 {/each}
 {#each days as day}
-    <div on:click={()=>click(value.add(day, 'day'))} class={dayClass(value, day)}>
-        {value.add(day, 'day').format('D')}
+    <div on:click={() => click(day)} class={dayClass(day)}>
+        {day.format('D')}
     </div>
 {/each}
-    
