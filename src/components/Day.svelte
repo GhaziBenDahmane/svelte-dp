@@ -14,8 +14,10 @@
         dispatch("input", day);
     }
     function dayClass(day) {
-        if (day.isSame(value)) return "cell day today";
-        if (day.month() === value.month()) return "cell day inside";
+        if (day.month() === value.month()) {
+            if (value.date() === day.date()) return "cell day today";
+            return "cell day inside";
+        }
         return "cell day outside";
     }
 </script>
